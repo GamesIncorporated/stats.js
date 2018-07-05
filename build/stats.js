@@ -44,9 +44,13 @@
             var memPanel = addPanel(new Stats.Panel("MB", "#f08", "#201"));
         }
 
-        var eventsPanel = addPanel(new Stats.Panel("#Objects", "#fd5f00", "#4b1c00"));
+        var objectsPanel = addPanel(new Stats.Panel("#Objects", "#fd5f00", "#4b1c00"));
 
-        showPanel([0]);
+        var eventsPanel = addPanel(new Stats.Panel("#Events", "#ccff00", "#283300"));
+
+        var eventCallsPanel = addPanel(new Stats.Panel("#EventCalls", "#ea0034", "#2e000a"));
+
+        showPanel([0, 1, 2, 3, 4, 5]);
 
         return {
             REVISION: 16,
@@ -60,12 +64,12 @@
                 beginTime = (performance || Date).now();
             },
 
-            end: function() {
+            end: function({ callbacksMade = 0, eventsProcessed = 0, objectCount = 0 } = {}) {
                 frames++;
 
                 var time = (performance || Date).now();
 
-                msPanel.update(time - beginTime, 200);
+                msPanel.update(time - beginTime, 100);
 
                 if (time >= prevTime + 1000) {
                     fpsPanel.update((frames * 1000) / (time - prevTime), 100);
@@ -78,8 +82,9 @@
                         memPanel.update(memory.usedJSHeapSize / 1048576, memory.jsHeapSizeLimit / 1048576);
                     }
                 }
-
-                eventsPanel.update(0, 1);
+                objectsPanel.update(objectCount, 2000);
+                eventsPanel.update(eventsProcessed, 10);
+                eventCallsPanel.update(callbacksMade, 5000);
 
                 return time;
             },
@@ -101,22 +106,22 @@
             round = Math.round;
         var PR = round(window.devicePixelRatio || 1);
 
-        var WIDTH = 80 * PR,
-            HEIGHT = 48 * PR,
+        var WIDTH = 130 * PR,
+            HEIGHT = 55 * PR,
             TEXT_X = 3 * PR,
             TEXT_Y = 2 * PR,
             GRAPH_X = 3 * PR,
-            GRAPH_Y = 15 * PR,
-            GRAPH_WIDTH = 74 * PR,
-            GRAPH_HEIGHT = 30 * PR;
+            GRAPH_Y = 20 * PR,
+            GRAPH_WIDTH = 124 * PR,
+            GRAPH_HEIGHT = 38 * PR;
 
         var canvas = document.createElement("canvas");
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
-        canvas.style.cssText = "width:80px;height:48px";
+        canvas.style.cssText = "width:130px;height:55px";
 
         var context = canvas.getContext("2d");
-        context.font = "bold " + 9 * PR + "px Helvetica,Arial,sans-serif";
+        context.font = "bold " + 10 * PR + "px Helvetica,Arial,sans-serif";
         context.textBaseline = "top";
 
         context.fillStyle = bg;
